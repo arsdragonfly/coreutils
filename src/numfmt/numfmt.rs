@@ -9,11 +9,26 @@
  * file that was distributed with this source code.
  */
 
+/*
+ * Options still missing from GNU numfmt:
+ * --debug
+ * -d/--delimiter
+ * --field
+ * --format
+ * --from-unit
+ * --format
+ * --grouping
+ * --invalid
+ * --round
+ * --suffix
+ * -z/--zero-terminated
+ */
+
 extern crate getopts;
 
 use getopts::{Matches, Options};
-use std::io::BufRead;
 use std::fmt;
+use std::io::BufRead;
 
 static NAME: &'static str = "numfmt";
 static VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -221,7 +236,10 @@ fn parse_options(args: &Matches) -> Result<NumfmtOptions> {
     let transform = if args.opt_present("from") {
         TransformOptions {
             direction: TransformDirection::From,
-            unit: parse_unit(args.opt_str("from").ok_or("'--from' should have argument")?)?,
+            unit: parse_unit(
+                args.opt_str("from")
+                    .ok_or("'--from' should have argument")?,
+            )?,
         }
     } else if args.opt_present("to") {
         TransformOptions {
@@ -320,19 +338,19 @@ pub fn uumain(args: Vec<String>) -> i32 {
    none   no auto-scaling is done; suffixes will trigger an error
 
    auto   accept optional single/two letter suffix:
-		  
+
 		  1K = 1000, 1Ki = 1024, 1M = 1000000, 1Mi = 1048576,
 
    si     accept optional single letter suffix:
-		  
+
 		  1K = 1000, 1M = 1000000, ...
 
    iec    accept optional single letter suffix:
-		  
+
 		  1K = 1024, 1M = 1048576, ...
 
    iec-i  accept optional two-letter suffix:
-		  
+
 		  1Ki = 1024, 1Mi = 1048576, ..."
         );
 
